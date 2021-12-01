@@ -21,9 +21,13 @@ func main() {
 		cnt1 = calcInc(depth)
 	}
 	fmt.Println("part1", cnt1)
+
+	calcWindow := memo(func(i int) int {
+		return depths[i] + depths[i-1] + depths[i-2]
+	})
 	for i := 3; i < len(depths); i++ {
-		win1 := depths[i-1] + depths[i-2] + depths[i-3]
-		win2 := depths[i] + depths[i-1] + depths[i-2]
+		win1 := calcWindow(i - 1)
+		win2 := calcWindow(i)
 		if win2 > win1 {
 			cnt2++
 		}
@@ -31,7 +35,7 @@ func main() {
 	fmt.Println("part2", cnt2)
 }
 
-func calcIncreases() func(int) int {
+func calcIncreases() func(int) int { //closure
 	prev, cnt := -1, 0
 	return func(i int) int {
 		if prev > 0 && i > prev {
@@ -39,5 +43,17 @@ func calcIncreases() func(int) int {
 		}
 		prev = i
 		return cnt
+	}
+}
+
+func memo(fn func(int) int) func(int) int { //memoizatoin
+	results := make(map[int]int)
+	return func(i int) int {
+		if value, ok := results[i]; ok {
+			return value
+		}
+		res := fn(i)
+		results[i] = res
+		return res
 	}
 }
