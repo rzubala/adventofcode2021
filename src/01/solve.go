@@ -1,15 +1,13 @@
 package main
 
 import (
-	"bufio"
+	"adventofcode2021/src/utils"
 	"fmt"
-	"log"
-	"os"
 	"strconv"
 )
 
 func main() {
-	var lines = readFile()
+	var lines = utils.ReadLines()
 	var depths []int
 	for _, value := range lines {
 		if n, err := strconv.Atoi(value); err == nil {
@@ -42,19 +40,4 @@ func calcIncreases() func(int) int {
 		prev = i
 		return cnt
 	}
-}
-
-func readFile() []string {
-	file, err := os.Open("data")
-	if err != nil {
-		log.Fatalf("failed opening file: %s", err)
-	}
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	var txtlines []string
-	for scanner.Scan() {
-		txtlines = append(txtlines, scanner.Text())
-	}
-	file.Close()
-	return txtlines
 }
