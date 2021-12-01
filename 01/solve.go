@@ -10,14 +10,27 @@ import (
 
 func main() {
 	var lines = readFile()
-	calcInc := calcIncreases()
-	var cnt int
+	var depths []int
 	for _, value := range lines {
-		if i, err := strconv.Atoi(value); err == nil {
-			cnt = calcInc(i)
+		if n, err := strconv.Atoi(value); err == nil {
+			depths = append(depths, n)
+		}
+
+	}
+	calcInc := calcIncreases()
+	cnt1, cnt2 := 0, 0
+	for _, depth := range depths {
+		cnt1 = calcInc(depth)
+	}
+	fmt.Println("part1", cnt1)
+	for i := 3; i < len(depths); i++ {
+		win1 := depths[i-1] + depths[i-2] + depths[i-3]
+		win2 := depths[i] + depths[i-1] + depths[i-2]
+		if win2 > win1 {
+			cnt2++
 		}
 	}
-	fmt.Println(cnt)
+	fmt.Println("part2", cnt2)
 }
 
 func calcIncreases() func(int) int {
