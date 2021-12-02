@@ -8,7 +8,7 @@ import (
 )
 
 type Point struct {
-	x, y int
+	x, y, aim int
 }
 
 func main() {
@@ -32,5 +32,24 @@ func main() {
 			operations[cmd[0]](&position, steps)
 		}
 	}
-	fmt.Printf("Position %d, %d -> %d\n", position.x, position.y, position.x*position.y)
+	fmt.Printf("Part1, position %d, %d -> %d\n", position.x, position.y, position.x*position.y)
+
+	operations["forward"] = func(p *Point, v int) {
+		p.x += v
+		p.y += p.aim * v
+	}
+	operations["up"] = func(p *Point, v int) {
+		p.aim -= v
+	}
+	operations["down"] = func(p *Point, v int) {
+		p.aim += v
+	}
+	position = Point{x: 0, y: 0}
+	for _, line := range lines {
+		cmd := strings.Split(line, " ")
+		if steps, err := strconv.Atoi(cmd[1]); err == nil {
+			operations[cmd[0]](&position, steps)
+		}
+	}
+	fmt.Printf("Part2, position %d, %d -> %d\n", position.x, position.y, position.x*position.y)
 }
