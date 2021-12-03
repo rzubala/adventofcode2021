@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	var lines = utils.ReadLines()
+	var lines = utils.ReadLines("data")
 	var depths []int
 	for _, value := range lines {
 		if n, err := strconv.Atoi(value); err == nil {

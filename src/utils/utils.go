@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-func ReadLines() []string {
-	file, err := os.Open("data")
+func ReadLines(fname string) []string {
+	file, err := os.Open(fname)
 	if err != nil {
 		log.Fatalf("failed opening file: %s", err)
 	}

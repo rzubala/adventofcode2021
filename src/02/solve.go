@@ -12,7 +12,7 @@ type Point struct {
 }
 
 func main() {
-	var lines = utils.ReadLines()
+	var lines = utils.ReadLines("data")
 
 	operations := make(map[string]func(*Point, int))
 	operations["forward"] = func(p *Point, v int) {
