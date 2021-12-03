@@ -38,5 +38,62 @@ func main() {
 	}
 	gammaN, _ := strconv.ParseInt(gamma.String(), 2, 64)
 	epsilonN, _ := strconv.ParseInt(epsilon.String(), 2, 64)
-	fmt.Println(gammaN, epsilonN, gammaN*epsilonN)
+	fmt.Println("part 1", gammaN*epsilonN)
+
+	var oxygen int64
+	pos := 0
+	var filtered []string = lines[0:]
+	found := false
+	for {
+		if filtered, found = filterLines(filtered, pos, true); found {
+			oxygen, _ = strconv.ParseInt(filtered[0], 2, 64)
+			break
+		}
+		fmt.Println(filtered)
+		pos++
+	}
+
+	var co2 int64
+	pos = 0
+	filtered = lines[0:]
+	found = false
+	for {
+		if filtered, found = filterLines(filtered, pos, false); found {
+			co2, _ = strconv.ParseInt(filtered[0], 2, 64)
+			break
+		}
+		pos++
+	}
+
+	fmt.Println("part 2", oxygen, co2, oxygen*co2)
+}
+
+func filterLines(lines []string, pos int, more bool) ([]string, bool) {
+	zeros, ones := 0, 0
+	var zeroRows, oneRows []string
+	for _, line := range lines {
+		bit := strings.Split(line, "")[pos]
+		if bit == "0" {
+			zeros++
+			zeroRows = append(zeroRows, line)
+		} else {
+			ones++
+			oneRows = append(oneRows, line)
+		}
+	}
+
+	fmt.Println(more, pos, zeros, len(zeroRows), ones, len(oneRows))
+	if more {
+		if ones > zeros || ones == zeros {
+			return oneRows, len(oneRows) == 1
+		} else {
+			return zeroRows, len(zeroRows) == 1
+		}
+	} else {
+		if ones > zeros || ones == zeros {
+			return zeroRows, len(zeroRows) == 1
+		} else {
+			return oneRows, len(oneRows) == 1
+		}
+	}
 }
