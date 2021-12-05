@@ -47,17 +47,25 @@ func main() {
 		rowIndex++
 	}
 
+	var bingos = make(map[int]bool)
 	for _, number := range numbers {
 		for b, board := range boards {
+			if _, ok := bingos[b]; ok {
+				continue
+			}
 			for y, row := range board {
+				if _, ok := bingos[b]; ok {
+					break
+				}
 				for x, p := range row {
 					if p.value == number {
 						p.Mark()
 						board[y][x] = p
 					}
 					if checkBingo(board, x, y) {
-						fmt.Println("Bingo", b, number*sumUnmarked((board)))
-						return
+						fmt.Println("Bingo", b, number, number*sumUnmarked((board)))
+						bingos[b] = true
+						break
 					}
 				}
 			}
@@ -102,10 +110,10 @@ func checkBingo(board [][]Point, x, y int) bool {
 	return bingo
 }
 
-func printBoard(boards [][][]Point, pos int) {
-	fmt.Println("***", pos, "***")
-	for y := 0; y < sizeY; y++ {
-		lineStr := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(boards[pos][y])), " "), "[]")
-		fmt.Println(lineStr)
-	}
-}
+// func printBoard(boards [][][]Point, pos int) {
+// 	fmt.Println("***", pos, "***")
+// 	for y := 0; y < sizeY; y++ {
+// 		lineStr := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(boards[pos][y])), " "), "[]")
+// 		fmt.Println(lineStr)
+// 	}
+// }
