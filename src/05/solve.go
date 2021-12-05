@@ -35,20 +35,8 @@ func main() {
 			addDiagonalPoints(points2, x1, y1, x2, y2)
 		}
 	}
-	res1 := 0
-	for _, cnt := range points1 {
-		if cnt > 1 {
-			res1++
-		}
-	}
-	fmt.Println("part1", res1)
-	res2 := 0
-	for _, cnt := range points2 {
-		if cnt > 1 {
-			res2++
-		}
-	}
-	fmt.Println("part2", res2)
+	fmt.Println("part1", sum(points1))
+	fmt.Println("part2", sum(points2))
 }
 
 func addDiagonalPoints(points map[Point]int, x1, y1, x2, y2 int) {
@@ -79,4 +67,14 @@ func inc(points map[Point]int, key Point) {
 		cnt = 1
 	}
 	points[key] = cnt
+}
+
+func sum(points map[Point]int) int {
+	res := 0
+	for _, cnt := range points {
+		if cnt > 1 {
+			res++
+		}
+	}
+	return res
 }
