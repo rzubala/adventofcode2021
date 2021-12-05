@@ -11,22 +11,9 @@ type Point struct {
 	x, y int
 }
 
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
-}
-
-func max(x, y int) int {
-	if x > y {
-		return x
-	}
-	return y
-}
-
 func main() {
-	var points = make(map[Point]int)
+	var points1 = make(map[Point]int)
+	var points2 = make(map[Point]int)
 	lines := utils.ReadLines("data")
 	for _, line := range lines {
 		parts := strings.Split(line, " -> ")
@@ -36,29 +23,66 @@ func main() {
 		y1, _ := strconv.Atoi(from[1])
 		x2, _ := strconv.Atoi(to[0])
 		y2, _ := strconv.Atoi(to[1])
-		if x1 != x2 && y1 != y2 {
-			continue
-		}
-		fmt.Println("***", x1, y1, x2, y2)
-		for x := min(x1, x2); x <= max(x1, x2); x++ {
-			for y := min(y1, y2); y <= max(y1, y2); y++ {
-				p := Point{x: x, y: y}
-				cnt, ok := points[p]
-				if ok {
-					fmt.Println(x, y, cnt)
-					points[p] = cnt + 1
-				} else {
-					fmt.Println(x, y, 1)
-					points[p] = 1
+		if x1 == x2 || y1 == y2 {
+			for x := utils.Min(x1, x2); x <= utils.Max(x1, x2); x++ {
+				for y := utils.Min(y1, y2); y <= utils.Max(y1, y2); y++ {
+					p := Point{x: x, y: y}
+					cnt1, ok1 := points1[p]
+					if ok1 {
+						points1[p] = cnt1 + 1
+					} else {
+						points1[p] = 1
+					}
+					cnt2, ok2 := points2[p]
+					if ok2 {
+						points2[p] = cnt2 + 1
+					} else {
+						points2[p] = 1
+					}
+
 				}
 			}
+		} else {
+			addDiagonalPoints(points2, x1, y1, x2, y2)
 		}
 	}
-	res := 0
-	for _, cnt := range points {
+	res1 := 0
+	for _, cnt := range points1 {
 		if cnt > 1 {
-			res++
+			res1++
 		}
 	}
-	fmt.Println(res)
+	fmt.Println("part1", res1)
+	res2 := 0
+	for _, cnt := range points2 {
+		if cnt > 1 {
+			res2++
+		}
+	}
+	fmt.Println("part2", res2)
+}
+
+func addDiagonalPoints(points map[Point]int, x1, y1, x2, y2 int) {
+	dx := utils.Abs(x1-x2) + 1
+	x := x1
+	y := y1
+	for ix := 0; ix < dx; ix++ {
+		p := Point{x: x, y: y}
+		cnt, ok := points[p]
+		if ok {
+			points[p] = cnt + 1
+		} else {
+			points[p] = 1
+		}
+		if x1 > x2 {
+			x--
+		} else if x1 < x2 {
+			x++
+		}
+		if y1 > y2 {
+			y--
+		} else if y1 < y2 {
+			y++
+		}
+	}
 }
