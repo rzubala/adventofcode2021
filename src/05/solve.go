@@ -27,19 +27,8 @@ func main() {
 			for x := utils.Min(x1, x2); x <= utils.Max(x1, x2); x++ {
 				for y := utils.Min(y1, y2); y <= utils.Max(y1, y2); y++ {
 					p := Point{x: x, y: y}
-					cnt1, ok1 := points1[p]
-					if ok1 {
-						points1[p] = cnt1 + 1
-					} else {
-						points1[p] = 1
-					}
-					cnt2, ok2 := points2[p]
-					if ok2 {
-						points2[p] = cnt2 + 1
-					} else {
-						points2[p] = 1
-					}
-
+					inc(points1, p)
+					inc(points2, p)
 				}
 			}
 		} else {
@@ -68,12 +57,7 @@ func addDiagonalPoints(points map[Point]int, x1, y1, x2, y2 int) {
 	y := y1
 	for ix := 0; ix < dx; ix++ {
 		p := Point{x: x, y: y}
-		cnt, ok := points[p]
-		if ok {
-			points[p] = cnt + 1
-		} else {
-			points[p] = 1
-		}
+		inc(points, p)
 		if x1 > x2 {
 			x--
 		} else if x1 < x2 {
@@ -85,4 +69,14 @@ func addDiagonalPoints(points map[Point]int, x1, y1, x2, y2 int) {
 			y++
 		}
 	}
+}
+
+func inc(points map[Point]int, key Point) {
+	cnt, ok := points[key]
+	if ok {
+		cnt++
+	} else {
+		cnt = 1
+	}
+	points[key] = cnt
 }
