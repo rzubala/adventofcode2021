@@ -48,22 +48,19 @@ func main() {
 	}
 
 	for _, number := range numbers {
-		fmt.Println(number)
 		for b, board := range boards {
 			for y, row := range board {
 				for x, p := range row {
 					if p.value == number {
 						p.Mark()
-						fmt.Println("mark", x, y, p)
 						board[y][x] = p
 					}
 					if checkBingo(board, x, y) {
-						fmt.Println("Bingo", number*sumUnmarked((board)))
+						fmt.Println("Bingo", b, number*sumUnmarked((board)))
 						return
 					}
 				}
 			}
-			printBoard(boards, b)
 		}
 	}
 }
