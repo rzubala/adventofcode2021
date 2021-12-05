@@ -16,7 +16,7 @@ type Point struct {
 }
 
 func main() {
-	lines := utils.ReadLines("test")
+	lines := utils.ReadLines("data")
 
 	var numbers []int
 	var boards [][][]Point
@@ -47,13 +47,62 @@ func main() {
 		rowIndex++
 	}
 
-	for index, _ := range boards {
-		printBoard(boards, index)
-	}
-
 	for _, number := range numbers {
-
+		fmt.Println(number)
+		for b, board := range boards {
+			for y, row := range board {
+				for x, p := range row {
+					if p.value == number {
+						p.Mark()
+						fmt.Println("mark", x, y, p)
+						board[y][x] = p
+					}
+					if checkBingo(board, x, y) {
+						fmt.Println("Bingo", number*sumUnmarked((board)))
+						return
+					}
+				}
+			}
+			printBoard(boards, b)
+		}
 	}
+}
+
+func (p *Point) Mark() {
+	p.mark = true
+}
+
+func sumUnmarked(board [][]Point) int {
+	sum := 0
+	for _, row := range board {
+		for _, p := range row {
+			if !p.mark {
+				sum += p.value
+			}
+		}
+	}
+	return sum
+}
+
+func checkBingo(board [][]Point, x, y int) bool {
+	bingo := true
+	for _, p := range board[y] {
+		if !p.mark {
+			bingo = false
+			break
+		}
+	}
+	if bingo {
+		return true
+	}
+	bingo = true
+	for _, row := range board {
+		if !row[x].mark {
+			bingo = false
+			break
+		}
+	}
+	return bingo
 }
 
 func printBoard(boards [][][]Point, pos int) {
