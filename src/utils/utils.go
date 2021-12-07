@@ -3,7 +3,10 @@ package utils
 import (
 	"bufio"
 	"log"
+	"math"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func ReadLines(fname string) []string {
@@ -21,11 +24,39 @@ func ReadLines(fname string) []string {
 	return txtlines
 }
 
+func ParseLineToIntArray(line, sep string) []int {
+	var result []int
+	for _, item := range strings.Split(line, ",") {
+		if val, err := strconv.Atoi(item); err == nil {
+			result = append(result, val)
+		} else {
+			log.Fatalf("%v, %v\n", "parse int", err)
+		}
+	}
+	return result
+}
+
 func Min(x, y int) int {
 	if x < y {
 		return x
 	}
 	return y
+}
+
+func MinArray(x []int) int {
+	var min int = math.MaxInt64
+	for _, val := range x {
+		min = Min(min, val)
+	}
+	return min
+}
+
+func MaxArray(x []int) int {
+	var max int = 0
+	for _, val := range x {
+		max = Max(max, val)
+	}
+	return max
 }
 
 func Max(x, y int) int {
