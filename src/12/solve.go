@@ -8,7 +8,7 @@ import (
 
 func main() {
 	nodes := make(map[string][]string)
-	lines := utils.ReadLines("test")
+	lines := utils.ReadLines("data")
 	for _, line := range lines {
 		parts := strings.Split(line, "-")
 
@@ -32,7 +32,7 @@ func findPaths(nodes map[string][]string, part2 bool) int {
 		currentPath, pathsStack = pathsStack[len(pathsStack)-1], pathsStack[:len(pathsStack)-1]
 		node := currentPath[len(currentPath)-1]
 		if node == "end" {
-			hash := strings.Join(currentPath, "")
+			hash := strings.Join(currentPath, ",")
 			newPath := true
 			for _, tmp := range pathHashes {
 				if tmp == hash {
@@ -41,6 +41,7 @@ func findPaths(nodes map[string][]string, part2 bool) int {
 				}
 			}
 			if newPath {
+				pathHashes = append(pathHashes, hash)
 				paths++
 			}
 			continue
@@ -48,7 +49,6 @@ func findPaths(nodes map[string][]string, part2 bool) int {
 
 		nextNodes := nodes[node]
 		for _, nn := range nextNodes {
-			visited := 0
 			addPath := true
 			if nn == "start" {
 				continue
@@ -56,15 +56,14 @@ func findPaths(nodes map[string][]string, part2 bool) int {
 			if utils.IsLower(nn) {
 				for _, tmpn := range currentPath {
 					if tmpn == nn {
-						if !part2 {
-							addPath = false
-							break
-						} else {
-							if visited == 1 {
+						if part2 {
+							if isVisitedOtherSmallTwice(currentPath) {
 								addPath = false
 								break
 							}
-							visited++
+						} else {
+							addPath = false
+							break
 						}
 					}
 				}
@@ -78,6 +77,21 @@ func findPaths(nodes map[string][]string, part2 bool) int {
 		}
 	}
 	return paths
+}
+
+func isVisitedOtherSmallTwice(currentPath []string) bool {
+	stats := make(map[string]bool)
+	for _, n := range currentPath {
+		if utils.IsUpper(n) {
+			continue
+		}
+		_, ok := stats[n]
+		if ok {
+			return true
+		}
+		stats[n] = true
+	}
+	return false
 }
 
 func add(node1, node2 string, nodes map[string][]string) {
