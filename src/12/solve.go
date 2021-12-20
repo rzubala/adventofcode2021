@@ -8,7 +8,7 @@ import (
 
 func main() {
 	nodes := make(map[string][]string)
-	lines := utils.ReadLines("test")
+	lines := utils.ReadLines("data")
 	for _, line := range lines {
 		parts := strings.Split(line, "-")
 
@@ -16,9 +16,42 @@ func main() {
 		add(parts[1], parts[0], nodes)
 	}
 
-	for key := range nodes {
-		fmt.Println(key, nodes[key])
+	pathsStack := make([][]string, 0)
+	start := make([]string, 0)
+	start = append(start, "start")
+	pathsStack = append(pathsStack, start)
+	paths := 0
+
+	for len(pathsStack) > 0 {
+		var currentPath []string
+		currentPath, pathsStack = pathsStack[len(pathsStack)-1], pathsStack[:len(pathsStack)-1]
+		node := currentPath[len(currentPath)-1]
+		if node == "end" {
+			paths++
+			continue
+		}
+
+		nextNodes := nodes[node]
+		for _, nn := range nextNodes {
+			visited := false
+			if utils.IsLower(nn) {
+				for _, tmpn := range currentPath {
+					if tmpn == nn {
+						visited = true
+						break
+					}
+				}
+			}
+			if !visited {
+				nextPath := make([]string, 0)
+				nextPath = append(nextPath, currentPath...)
+				nextPath = append(nextPath, nn)
+				pathsStack = append(pathsStack, nextPath)
+			}
+		}
 	}
+
+	fmt.Println("Part1", paths)
 }
 
 func add(node1, node2 string, nodes map[string][]string) {
