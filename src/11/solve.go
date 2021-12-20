@@ -36,10 +36,9 @@ func main() {
 		}
 	}
 	queue := make([]Point, 0)
-	steps := 100
 	flashes := 0
-	for s := 0; s < steps; s++ {
-		//fmt.Println("Step: ***", s+1)
+	step := 1
+	for {
 		queue = append(queue, points...)
 		for len(queue) > 0 {
 			var p Point
@@ -57,10 +56,17 @@ func main() {
 			}
 			board[p] = Cell{level: nlevel, flashed: nflashed}
 		}
-		//print(board, w, h)
-		flashes += resetFlashed(board, w, h)
+		flashesPerStep := resetFlashed(board, w, h)
+		flashes += flashesPerStep
+		if step == 100 {
+			fmt.Println("part1", flashes)
+		}
+		if flashesPerStep == w*h {
+			fmt.Println("part2", step)
+			break
+		}
+		step++
 	}
-	fmt.Println("part1", flashes)
 }
 
 func (p *Point) Neighbours(board map[Point]Cell, w, h int) []Point {
@@ -100,14 +106,4 @@ func resetFlashed(board map[Point]Cell, w, h int) int {
 		}
 	}
 	return count
-}
-
-func print(board map[Point]Cell, w, h int) {
-	fmt.Println()
-	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
-			fmt.Print(board[Point{x, y}].level)
-		}
-		fmt.Println()
-	}
 }
