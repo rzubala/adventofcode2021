@@ -41,7 +41,7 @@ func main() {
 			}
 		}
 	}
-	print(nodes, w, h)
+	//print(nodes, w, h)
 
 	start := Node{0, 0}
 	end := Node{w - 1, h - 1}
@@ -51,14 +51,24 @@ func main() {
 	stack = append(stack, start)
 	costs[start] = 0
 
+	totalPessimisticCost := pessimisticCost(w, h)
+
 	for len(stack) > 0 {
 		var node Node
 		node, stack = stack[len(stack)-1], stack[:len(stack)-1]
 		if node.x == end.x && node.y == end.y {
 			continue
 		}
-		fmt.Println(node, len(stack), len(previous), len(costs))
 		cost := costs[node]
+		if cost >= totalPessimisticCost || cost > pessimisticCost(node.x, node.y) || pessimisticCost(node.x, node.y)+pessimisticCost(w-node.x, h-node.y) > totalPessimisticCost {
+			//fmt.Println("skip", node, cost, totalPessimisticCost, pessimisticCost(node.x, node.y), pessimisticCost(w-node.x, h-node.y))
+			continue
+		}
+		endCost, hasEnd := costs[end]
+		if hasEnd && cost >= endCost {
+			//fmt.Println("skip", node, cost, endCost)
+			continue
+		}
 		nextNodes := node.Neighbours(w, h)
 		for _, nextNode := range nextNodes {
 			risk := nodes[nextNode]
@@ -73,6 +83,10 @@ func main() {
 
 	}
 	fmt.Println("part1", costs[end])
+}
+
+func pessimisticCost(x, y int) int {
+	return (x + y) * 9
 }
 
 func print(nodes map[Node]int, w, h int) {
