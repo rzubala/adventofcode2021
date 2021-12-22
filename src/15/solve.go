@@ -27,6 +27,11 @@ func (n *Node) IsInside(w, h int) bool {
 }
 
 func main() {
+	solve(false)
+	solve(true)
+}
+
+func solve(extended bool) {
 	nodes := make(map[Node]int)
 	lines := utils.ReadLines("data")
 	w, h := 0, len(lines)
@@ -41,8 +46,26 @@ func main() {
 			}
 		}
 	}
-	//print(nodes, w, h)
-
+	if extended {
+		for y := 0; y < h; y++ {
+			for x := 0; x < w; x++ {
+				for j := 0; j < 5; j++ {
+					for i := 0; i < 5; i++ {
+						if i == 0 && j == 0 {
+							continue
+						}
+						val := (nodes[Node{x, y}] + i + j) % 9
+						if val == 0 {
+							val = 9
+						}
+						nodes[Node{x + w*i, y + h*j}] = val
+					}
+				}
+			}
+		}
+		w *= 5
+		h *= 5
+	}
 	start := Node{0, 0}
 	end := Node{w - 1, h - 1}
 	costs := make(map[Node]int)
@@ -51,7 +74,7 @@ func main() {
 	stack = append(stack, start)
 	costs[start] = 0
 
-	totalPessimisticCost := pessimisticCost(w, h)
+	totalPessimisticCost := pessimisticCost(w, h, 9)
 
 	for len(stack) > 0 {
 		var node Node
@@ -60,13 +83,11 @@ func main() {
 			continue
 		}
 		cost := costs[node]
-		if cost >= totalPessimisticCost || cost > pessimisticCost(node.x, node.y) || pessimisticCost(node.x, node.y)+pessimisticCost(w-node.x, h-node.y) > totalPessimisticCost {
-			//fmt.Println("skip", node, cost, totalPessimisticCost, pessimisticCost(node.x, node.y), pessimisticCost(w-node.x, h-node.y))
+		endCost, hasEnd := costs[end]
+		if cost >= totalPessimisticCost || cost > pessimisticCost(node.x, node.y, 9) || pessimisticCost(node.x, node.y, 9)+pessimisticCost(w-node.x, h-node.y, 9) > pessimisticCost(w, h, 9) {
 			continue
 		}
-		endCost, hasEnd := costs[end]
 		if hasEnd && cost >= endCost {
-			//fmt.Println("skip", node, cost, endCost)
 			continue
 		}
 		nextNodes := node.Neighbours(w, h)
@@ -82,18 +103,9 @@ func main() {
 		}
 
 	}
-	fmt.Println("part1", costs[end])
+	fmt.Println("result", extended, costs[end])
 }
 
-func pessimisticCost(x, y int) int {
-	return (x + y) * 9
-}
-
-func print(nodes map[Node]int, w, h int) {
-	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
-			fmt.Print(nodes[Node{x, y}])
-		}
-		fmt.Println()
-	}
+func pessimisticCost(x, y, w int) int {
+	return (x + y) * w
 }
