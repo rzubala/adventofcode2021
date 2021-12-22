@@ -11,11 +11,6 @@ type Node struct {
 	x, y int
 }
 
-type Cost struct {
-	node Node
-	cost int
-}
-
 func (n *Node) Neighbours(w, h int) []Node {
 	result := make([]Node, 0)
 	tmp := []Node{{n.x - 1, n.y}, {n.x + 1, n.y}, {n.x, n.y - 1}, {n.x, n.y + 1}}
@@ -52,18 +47,18 @@ func main() {
 	end := Node{w - 1, h - 1}
 	costs := make(map[Node]int)
 	previous := make(map[Node]Node)
-	stack := make([]Cost, 0)
-	stack = append(stack, Cost{start, 0})
+	stack := make([]Node, 0)
+	stack = append(stack, start)
+	costs[start] = 0
 
 	for len(stack) > 0 {
-		var costNode Cost
-		costNode, stack = stack[len(stack)-1], stack[:len(stack)-1]
-		node := costNode.node
+		var node Node
+		node, stack = stack[len(stack)-1], stack[:len(stack)-1]
 		if node.x == end.x && node.y == end.y {
 			continue
 		}
 		fmt.Println(node, len(stack), len(previous), len(costs))
-		cost := costNode.cost
+		cost := costs[node]
 		nextNodes := node.Neighbours(w, h)
 		for _, nextNode := range nextNodes {
 			risk := nodes[nextNode]
@@ -72,31 +67,12 @@ func main() {
 			if ok && newCost < nextCost || !ok {
 				costs[nextNode] = newCost
 				previous[nextNode] = node
-				stack = append(stack, Cost{nextNode, newCost})
+				stack = append(stack, nextNode)
 			}
 		}
 
 	}
 	fmt.Println("part1", costs[end])
-	//printPath(previous, costs, end, start)
-}
-
-func printPath(path map[Node]Node, costs map[Node]int, from, to Node) {
-	node := from
-	totalCost := 0
-	for {
-		cost := costs[node]
-		totalCost += cost
-		fmt.Println(node, cost, totalCost)
-		var ok bool
-		if node, ok = path[node]; !ok {
-			break
-		} else {
-			if node.x == to.x && node.y == to.y {
-				break
-			}
-		}
-	}
 }
 
 func print(nodes map[Node]int, w, h int) {
