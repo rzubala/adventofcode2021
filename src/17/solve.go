@@ -19,14 +19,10 @@ func (p *probe) move() {
 	p.y += p.vy
 	if p.vx > 0 {
 		p.vx--
-	} else {
+	} else if p.vx < 0 {
 		p.vx++
 	}
 	p.vy--
-}
-
-func (p *probe) location() {
-	fmt.Println(p.x, p.y)
 }
 
 func (p *probe) inTarget(t target) bool {
@@ -34,7 +30,7 @@ func (p *probe) inTarget(t target) bool {
 }
 
 func (p *probe) outTarget(t target) bool {
-	return p.x > t.x2 || p.y < t.y2
+	return p.x > t.x2 || p.y < t.y1
 }
 
 func main() {
@@ -42,8 +38,9 @@ func main() {
 	var t = target{137, 171, -98, -73}
 
 	var maxY = 0
-	for vx := t.x1; vx > 1; vx-- {
-		for vy := t.y1; vy < -t.y1; vy++ {
+	cnt := 0
+	for vx := t.x2; vx > 0; vx-- {
+		for vy := t.y1; vy <= -t.y1; vy++ {
 			var p = probe{vx: vx, vy: vy}
 			var tmpY = 0
 			for {
@@ -51,15 +48,15 @@ func main() {
 				tmpY = utils.Max(p.y, tmpY)
 				if p.inTarget(t) {
 					maxY = utils.Max(maxY, tmpY)
-					fmt.Println("in max", maxY)
+					cnt++
 					break
 				}
 				if p.outTarget(t) {
-					//fmt.Println("OUT")
 					break
 				}
 			}
 		}
 	}
-	fmt.Println(maxY)
+	fmt.Println("part 1", maxY)
+	fmt.Println("part 2", cnt)
 }
